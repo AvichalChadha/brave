@@ -121,7 +121,7 @@ class YoutubeDLInput( Input ):
 
                 ydl.download( [ self.uri ] )
 
-                meta = ydl.extract_info ( self.uri, download=False )
+                meta = ydl.extract_info ( self.uri, download = False )
 
                 ytdl_url    = meta.get( 'url' )
                 self.stream = ytdl_url
@@ -142,7 +142,7 @@ class YoutubeDLInput( Input ):
 
             print ( meta )
 
-        except e:
+        except:
             print ( e )
             pass
 
@@ -193,7 +193,8 @@ class YoutubeDLInput( Input ):
     def create_video_elements( self ):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
 
-        bin_as_string = ( 'videoconvert ! videorate ! videoscale ! '
+        bin_as_string = ( 'queue ! videoconvert ! '
+                          'videorate ! videoscale ! '
                           'capsfilter caps="video/x-raw" name=capsfilter ! '
                           'queue name=video_output_queue ! '
                           'tee name=final_video_tee allow-not-linked=true ! queue '
@@ -217,7 +218,8 @@ class YoutubeDLInput( Input ):
         # default caps
         # audio/x-raw,channels=2,layout=interleaved,rate=44100,format=S16LE
 
-        bin_as_string = ( 'audioconvert ! audiorate ! audioresample ! '
+        bin_as_string = ( 'queue ! audioconvert ! '
+                          'audiorate ! audioresample ! '
                           'capsfilter caps="audio/x-raw, channels=2, rate=44100, format=S16LE" name=audio_capsfilter ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true ! queue '
