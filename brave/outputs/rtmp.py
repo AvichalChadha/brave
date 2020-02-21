@@ -27,7 +27,7 @@ class RTMPOutput(Output):
         '''
         Create the elements needed whether this is audio, video, or both
         '''
-        pipeline_string = 'flvmux name=mux streamable=true ! rtmpsink name=sink '
+        pipeline_string = 'flvmux name=mux streamable=true ! rtmpsink name=sink sync=false'
 
         # samplesperbuffer=44100 num-buffers=10
 
