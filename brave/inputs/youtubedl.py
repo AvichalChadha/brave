@@ -143,7 +143,6 @@ class YoutubeDLInput( Input ):
             print ( meta )
 
         except:
-            print ( e )
             pass
 
 
