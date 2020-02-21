@@ -40,22 +40,36 @@ RUN apt-get update && \
 
 RUN pip3 install pipenv sanic
 
-COPY . /src
-WORKDIR /src
 
-RUN cd gst-WebRenderSrc && \
-    cmake -DCMAKE_BUILD_TYPE=Release . && \
-    CC=clang CXX=clang++ make -stdlib=g++ && \
-    make install
-
+# Build & Install gst-interpipe
 RUN git clone --depth 1 https://github.com/RidgeRun/gst-interpipe.git && \
     cd gst-interpipe && \
     ./autogen.sh --libdir /usr/lib/x86_64-linux-gnu/gstreamer-1.0/ && \
     make && \
     make install
 
+
+# Build & Install gst-WebRenderSrc
+COPY ./gst-WebRenderSrc /src/gst-WebRenderSrc
+WORKDIR /src/gst-WebRenderSrc
+
+RUN cd gst-WebRenderSrc && \
+    cmake -DCMAKE_BUILD_TYPE=Release . && \
+    CC=clang CXX=clang++ make -stdlib=g++ && \
+    make install
+
+
+# Everything Else
+COPY . /src
+WORKDIR /src
+
 RUN pipenv install && \
     mkdir -p /usr/local/share/brave/output_images/
+
+EXPOSE 5000
+
+CMD ["pipenv", "run", "/src/brave.py", "-c", "/config/config.yaml"]
+
 
 #ARG BRAVE_REPO=bitwave-tv
 #RUN git clone --depth 1 https://github.com/${BRAVE_REPO}/brave.git && \
@@ -63,7 +77,3 @@ RUN pipenv install && \
 #    pip3 install pipenv sanic && \
 #    pipenv install && \
 #    mkdir -p /usr/local/share/brave/output_images/
-
-EXPOSE 5000
-
-CMD ["pipenv", "run", "/src/brave.py", "-c", "/config/config.yaml"]
