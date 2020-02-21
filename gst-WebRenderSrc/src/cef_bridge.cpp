@@ -1,42 +1,42 @@
-#include <unistd.h>
+#ifndef CLIENT_H
+#define	CLIENT_H
 
-#include "cef_bridge.h"
-#include "cef/Browser.h"
+#include <gst/gstinfo.h>
 
-namespace
+#include <include/cef_client.h>
+#include <include/cef_render_handler.h>
+
+class Client :
+    public CefClient,
+    public CefRenderHandler,
+    public CefLifeSpanHandler
 {
-    static gint message_loop_running = 0;
-}
+public:
+    class Listener {
+    public:
+        virtual bool GetViewRect(CefRect& rect) = 0;
+        virtual void OnPaint(CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList& rects, const void* buffer, int width, int height)  = 0;
+    };
+public:
+    Client(Listener *listener);
+    virtual ~Client();
 
-void new_browser_instance(gpointer args)
-{
-    Browser& browser = Browser::getInstance();
-    struct cef_interface *cb = (struct cef_interface *)args;
-
-    browser.Init(cb->gstWebRenderSrc, cb->push_frame);
-
-    g_atomic_int_set(&message_loop_running, 1);
-
-    browser.CreateFrame(cb->url, cb->width, cb->height);
-}
-
-void end_browser_instance()
-{
-    g_atomic_int_set(&message_loop_running, 0);
-    Browser::getInstance().End();
-}
-
-static bool _inner_browser_run(void)
-{
-    if (g_atomic_int_get(&message_loop_running)) {
-        Browser::getInstance().Run();
-        return true;
-    } else {
-        return false;
+    //Overrride
+    virtual CefRefPtr<CefRenderHandler> GetRenderHandler() override {
+        // Return the handler for off-screen rendering events.
+        return this;
     }
-}
+    virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override {
+        // Return browser life span handler
+        return this;
+    }
 
-void run_browser_message_loop(gpointer args)
-{
-    g_idle_add((GSourceFunc)_inner_browser_run, NULL);
-}
+    virtual void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) override;
+    virtual void OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const RectList& rects, const void* buffer, int width, int height) override;
+
+    IMPLEMENT_REFCOUNTING(Client);
+private:
+    Listener* listener;
+};
+
+#endif	/* CLIENT_H */

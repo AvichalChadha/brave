@@ -26,7 +26,7 @@ Browser::~Browser()
 
 /************************
 * Init
-* 	
+*
 *************************/
 int Browser::Init(void *webRenderSrc, void *push_frame)
 {
@@ -38,7 +38,7 @@ int Browser::Init(void *webRenderSrc, void *push_frame)
     // if this is a sub-process, executes the appropriate logic.
     int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
 
-    if (exit_code >= 0) 
+    if (exit_code >= 0)
         // The sub-process has completed so return here.
         return exit_code;
 
@@ -48,7 +48,7 @@ int Browser::Init(void *webRenderSrc, void *push_frame)
 
     //Enable remote debugging
     settings.remote_debugging_port=2012;
-    
+
     ///
     // Set to true (1) to enable windowless (off-screen) rendering support. Do not
     // enable this value if the application does not use windowless rendering as
@@ -62,6 +62,7 @@ int Browser::Init(void *webRenderSrc, void *push_frame)
     // calling this file to runder the renders
     ///
     CefString(&settings.browser_subprocess_path).FromASCII("cefsubprocess");
+       CefString(&settings.locales_dir_path).FromASCII("/usr/local/lib/locales");
 
     #if defined(OS_MACOSX)
     CefString(&settings.framework_dir_path).FromASCII("/usr/local/Frameworks/Chromium Embedded Framework.framework");
@@ -70,7 +71,7 @@ int Browser::Init(void *webRenderSrc, void *push_frame)
     this->push_frame = (void (*)(void *webRenderSrc, const void *buffer, int width, int height)) push_frame;
     this->webRenderSrc = webRenderSrc;
 
-    //Verbose logs	
+    //Verbose logs
     settings.log_severity = LOGSEVERITY_WARNING;
 
     // Initialize CEF for the browser process.
@@ -108,7 +109,7 @@ int Browser::End()
     //Stop thread
     inited = 0;
 
-    //Quite message loop 
+    //Quite message loop
     CefQuitMessageLoop();
 
     // Shut down CEF.
@@ -121,12 +122,12 @@ int Browser::CreateFrame(std::string url, int width, int height)
 {
     // Information about the window that will be created including parenting, size, etc.
     CefWindowInfo info;
-    
+
     info.width = width;
     info.height = height;
 
     info.windowless_rendering_enabled = true;
-    
+
      // Client implements browser-level callbacks and RenderHandler
     CefRefPtr<Client> handler(new Client(this));
 
@@ -135,9 +136,9 @@ int Browser::CreateFrame(std::string url, int width, int height)
 
     //Set the refresh rate to 30fps
     browser_settings.windowless_frame_rate = 30;
-    
+
     // Create the first browser window.
-    CefBrowserHost::CreateBrowserSync(info, handler.get(), url, browser_settings, NULL);
+    CefBrowserHost::CreateBrowserSync(info, handler.get(), url, browser_settings, NULL,NULL);
     GST_INFO("CefBrowserHost::CreateBrowserSync");
 
     return 0;
@@ -156,12 +157,12 @@ bool Browser::GetViewRect(CefRect& rect)
 }
 
 /*Off-Screen Rendering
- * With off-screen rendering CEF does not create a native browser window. 
- * Instead, CEF provides the host application with invalidated regions and a 
- * pixel buffer and the host application notifies CEF of mouse, keyboard and 
- * focus events. Off-screen rendering does not currently support accelerated 
+ * With off-screen rendering CEF does not create a native browser window.
+ * Instead, CEF provides the host application with invalidated regions and a
+ * pixel buffer and the host application notifies CEF of mouse, keyboard and
+ * focus events. Off-screen rendering does not currently support accelerated
  * compositing so performance may suffer as compared to a windowed browser.
- * Off-screen browsers will receive the same notifications as windowed browsers 
+ * Off-screen browsers will receive the same notifications as windowed browsers
  * including the life span notifications described in the previous section.
  * To use off-screen rendering:
  *  Implement the CefRenderHandler interface. All methods are required unless otherwise indicated.

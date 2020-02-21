@@ -1,7 +1,7 @@
 #include "Client.h"
 
 Client::Client(Listener* listener)
-{ 
+{
     //Store
     this->listener = listener;
 }
@@ -10,10 +10,11 @@ Client::~Client()
 {
 }
 
-bool Client::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect)
+void Client::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect)
 {
     //Call listener
-    return listener && listener->GetViewRect(rect);
+    //return listener &&
+        listener->GetViewRect(rect);
 }
 
 void Client::OnPaint(CefRefPtr<CefBrowser>, CefRenderHandler::PaintElementType type, const RectList& rects, const void* buffer, int width, int height)

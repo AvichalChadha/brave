@@ -5,7 +5,7 @@
 # See the included README.md file for usage instructions.
 
 cmake_minimum_required(VERSION 2.8.12.1)
-
+cmake_policy(SET CMP0074 OLD)
 # Only generate Debug and Release configuration types.
 set(CMAKE_CONFIGURATION_TYPES Release Debug)
 
@@ -17,7 +17,8 @@ set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 set(GST_INSTALL_BASE "${CMAKE_SOURCE_DIR}/third_party" CACHE INTERNAL "Path to the GStreamer install base")
 
 # Specify the CEF distribution version.
-set(CEF_VERSION "3.3497.1836.gb472a8d")
+set(CEF_VERSION "78.3.9+gc7345f2+chromium-78.0.3904.108")
+set(CEF_ESCAPED_VERSION "78.3.9%2Bgc7345f2%2Bchromium-78.0.3904.108")
 
 #Need a build of Gstreamer with WebRTC fixes
 set(GST_REQUIRED 1.14.3)
@@ -51,7 +52,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # Download and extract the CEF binary distribution (executes DownloadCEF.cmake).
 include(DownloadCEF)
 include(FindPkgConfig)
-DownloadCEF("${CEF_PLATFORM}" "${CEF_VERSION}" "${CMAKE_SOURCE_DIR}/third_party/cef")
+DownloadCEF("${CEF_PLATFORM}" "${CEF_VERSION}" "${CEF_ESCAPED_VERSION}" "${CMAKE_SOURCE_DIR}/third_party/cef")
 
 # Add the CEF binary distribution's cmake/ directory to the module path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CEF_ROOT}/cmake")
