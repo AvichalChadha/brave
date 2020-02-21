@@ -27,21 +27,26 @@ class RTMPOutput(Output):
         '''
         Create the elements needed whether this is audio, video, or both
         '''
-        pipeline_string = 'flvmux name=mux streamable=true ! rtmpsink name=sink sync=false'
+        pipeline_string = 'flvmux name=mux streamable=true ! rtmpsink name=sink sync=true async=true '
 
         # samplesperbuffer=44100 num-buffers=10
 
+
         if config.enable_video():
             # key-int-max=60 puts a keyframe every 2 seconds (60 as 2*framerate)
-            pipeline_string += ' ' + self._video_pipeline_start() + \
-                'x264enc name=video_encoder speed-preset=ultrafast tune=zerolatency key-int-max=30 ! h264parse ! queue ! mux.'
+            pipeline_string += f' {self._video_pipeline_start()} x264enc name=video_encoder speed-preset=ultrafast tune=zerolatency key-int-max=30 ! '
+                                'h264parse ! queue ! mux.'
 
         if config.enable_audio():
-            pipeline_string += ' ' + self._audio_pipeline_start() + \
-                'avenc_aac name=audio_encoder ! aacparse ! audio/mpeg, mpegversion=4 ! queue ! mux.'
+            pipeline_string += f' {self._audio_pipeline_start()} avenc_aac name=audio_encoder ! '
+                                'aacparse ! mpegaudioparse ! queue ! mux.'
 
+
+        # Create RTMP muxing pipeline
         self.create_pipeline_from_string(pipeline_string)
-        self.pipeline.get_by_name('sink').set_property('location', self.uri + ' live=1')
+
+        # Add OUTPUT to pipeline
+        self.pipeline.get_by_name('sink').set_property('location', f'{self.uri} live=1')
 
         self.logger.info('RTMP output now configured to send to ' + self.uri)
 
