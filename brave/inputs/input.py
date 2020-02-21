@@ -70,6 +70,11 @@ class Input(InputOutputOverlay):
             for connection in self.dest_connections():
                 connection.handle_updated_props()
 
+        if self.has_audio():
+            self._update_audio_filter_caps()
+            for connection in self.dest_connections():
+                connection.handle_updated_props()
+
     def _create_caps_string(self):
         '''
         Returns the preferred caps (a string defining things such as width, height and framerate)
@@ -100,6 +105,34 @@ class Input(InputOutputOverlay):
         for connection in self.dest_connections():
             connection.set_new_caps(new_caps)
 
+    def _create_audio_caps_string(self):
+        '''
+        Returns the preferred caps (a string defining things such as width, height and framerate)
+        '''
+        channels = self.channels if hasattr(self, 'channels') else 0
+        rate = self.rate if hasattr(self, 'rate') else 0
+
+        caps_string = 'audio/x-raw, format=S16LE'
+        if channels and rate:
+            caps_string += ', channels=%d, rate=%d' % (channels, rate)
+        return caps_string
+
+    def _update_audio_filter_caps(self):
+        caps_string = self._create_audio_caps_string()
+        if caps_string is None:
+            return
+
+        self.logger.debug('New caps: ' + caps_string)
+        new_caps = Gst.Caps.from_string(caps_string)
+
+        if hasattr(self, 'audio_capsfilter'):
+            self.audio_capsfilter.set_property('caps', new_caps)
+
+        # We have a second audio_capsfilter after the jump between pipelines.
+        # We must also set that to be the same caps.
+        for connection in self.dest_connections():
+            connection.set_new_caps(new_caps)
+
     def on_pipeline_start(self):
         '''
         Called when the stream starts
@@ -110,12 +143,14 @@ class Input(InputOutputOverlay):
     def default_video_pipeline_string_end(self):
         # A tee is used so that we can connect this input to multiple mixers/outputs
         # The fakesink with sync=true ensures the stream acts as a live stream even with no connections.
-        return (' queue name=video_output_queue ! tee name=final_video_tee allow-not-linked=true'
-                ' final_video_tee. ! queue ! fakesink sync=true' )
+        return ( 'queue name=video_output_queue ! '
+                 'tee name=final_video_tee allow-not-linked=true ! queue '
+                 'final_video_tee. ! queue ! fakesink sync=true ')
 
     def default_audio_pipeline_string_end(self):
-        return (' queue name=audio_output_queue ! tee name=final_audio_tee allow-not-linked=true'
-                ' final_audio_tee. ! queue ! fakesink sync=true' )
+        return ( 'queue name=audio_output_queue ! '
+                 'tee name=final_audio_tee allow-not-linked=true ! queue '
+                 'final_audio_tee. ! queue ! fakesink sync=true' )
 
     def add_element(self, factory_name, who_its_for, audio_or_video, name=None):
         '''

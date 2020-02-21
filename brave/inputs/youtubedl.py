@@ -193,10 +193,10 @@ class YoutubeDLInput( Input ):
     def create_video_elements( self ):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
 
-        bin_as_string = ( 'videoconvert !  video/x-raw  ! videoscale ! '
-                          'capsfilter name=capsfilter ! '
+        bin_as_string = ( 'videoconvert ! videorate ! videoscale ! '
+                          'capsfilter caps="video/x-raw" name=capsfilter ! '
                           'queue name=video_output_queue ! '
-                          'tee name=final_video_tee allow-not-linked=true '
+                          'tee name=final_video_tee allow-not-linked=true ! queue '
                           'final_video_tee. ! queue ! fakesink sync=true' )
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )
@@ -211,14 +211,16 @@ class YoutubeDLInput( Input ):
 
 
     def create_audio_elements( self ):
-        # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample ! {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
+        # bin_as_string = f'audiorate tolerance=48000 ! audioconvert ! audioresample !
+        # {config.default_audio_caps()} ! queue ! {self.default_audio_pipeline_string_end()}'
 
+        # default caps
         # audio/x-raw,channels=2,layout=interleaved,rate=44100,format=S16LE
 
         bin_as_string = ( 'audioconvert ! audiorate ! audioresample ! '
-                          'capsfilter caps="audio/x-raw, channels=2, rate=44100" name=audio_capsfilter ! '
+                          'capsfilter caps="audio/x-raw, channels=2, rate=44100, format=S16LE" name=audio_capsfilter ! '
                           'queue name=audio_output_queue ! '
-                          'tee name=final_audio_tee allow-not-linked=true '
+                          'tee name=final_audio_tee allow-not-linked=true ! queue '
                           'final_audio_tee. ! queue ! fakesink sync=true' )
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )

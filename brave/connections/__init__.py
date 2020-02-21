@@ -16,8 +16,10 @@ class ConnectionCollection(AbstractCollection):
     def add(self, source, dest, **args):
         if isinstance(source, Output):
             raise ValueError('Cannot have a connection with output as source')
+
         if isinstance(dest, Input):
             raise ValueError('Cannot have a connection with input as source')
+
         if isinstance(dest, Output):
             if dest.source_connection() is not None:
                 raise InvalidConfiguration('Output %d is already connected to a source' % dest.id)
