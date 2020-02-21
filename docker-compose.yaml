@@ -8,8 +8,10 @@ services:
     container_name: bitwave-brave
     image: bitwavetv/brave:latest
 
-    ports:
-      - "5000:5000"
+    network_mode: host
+
+    # ports:
+    #   - "5000:5000"
 
     # Mount archives
     volumes:
