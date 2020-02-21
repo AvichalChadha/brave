@@ -135,7 +135,7 @@ class Mixer(InputOutputOverlay):
         pipeline_string = ''
         if config.enable_video():
             # To work reliably we have a default source (videotestsrc)
-            # It has the lowest permitted zorder (0) so that other things will appear on top.
+            # It has the lowest permitted z-order (0) so that other things will appear on top.
             # After the compositor, the format is changed from RGBA to RGBx (i.e. remove the alpha chanel)
             # This is done (a) for overlay effects to work, and (b) for all outputs to work.
             pipeline_string += ('videotestsrc is-live=true name=videotestsrc ! videoconvert ! videoscale ! '
