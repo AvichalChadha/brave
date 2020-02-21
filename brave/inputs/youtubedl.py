@@ -196,9 +196,8 @@ class YoutubeDLInput( Input ):
         bin_as_string = ( 'videoconvert ! '
                           'videorate ! videoscale ! '
                           'capsfilter caps="video/x-raw" name=capsfilter ! '
-                          'identity sync=true ! '
                           'queue name=video_output_queue ! '
-                          'tee name=final_video_tee allow-not-linked=true ! queue '
+                          'tee name=final_video_tee allow-not-linked=true '
                           'final_video_tee. ! queue ! fakesink sync=true' )
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )
@@ -222,9 +221,8 @@ class YoutubeDLInput( Input ):
         bin_as_string = ( 'audioconvert ! '
                           'audiorate ! audioresample ! '
                           'capsfilter caps="audio/x-raw, channels=2, rate=44100, format=S16LE" name=audio_capsfilter ! '
-                          'identity sync=true ! '
                           'queue name=audio_output_queue ! '
-                          'tee name=final_audio_tee allow-not-linked=true ! queue '
+                          'tee name=final_audio_tee allow-not-linked=true '
                           'final_audio_tee. ! queue ! fakesink sync=true' )
 
         bin = Gst.parse_bin_from_description( bin_as_string, True )
