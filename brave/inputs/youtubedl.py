@@ -111,6 +111,7 @@ class YoutubeDLInput( Input ):
             'simulate'   : True,
             'noplaylist' : True,
             'forceurl'   : True,
+            'ratelimit'  : '5M',
             'logger'     : MyLogger(),
         }
 
