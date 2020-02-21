@@ -37,6 +37,8 @@ RUN apt-get update && \
     python3-psutil \
     python3-uvloop
 
+RUN pip3 install pipenv sanic
+
 COPY . /src
 WORKDIR /src
 
