@@ -37,7 +37,7 @@ class RTMPOutput(Output):
             pipeline_string += f' {self._video_pipeline_start()} x264enc name=video_encoder speed-preset=ultrafast tune=zerolatency option-string=no-scenecut key-int-max=30 ! h264parse ! queue ! mux.'
 
         if config.enable_audio():
-            pipeline_string += f' {self._audio_pipeline_start()} avenc_aac name=audio_encoder ! aacparse ! mpegaudioparse ! queue ! mux.'
+            pipeline_string += f' {self._audio_pipeline_start()} avenc_aac name=audio_encoder ! aacparse ! queue ! mux.'
 
 
         # Create RTMP muxing pipeline
