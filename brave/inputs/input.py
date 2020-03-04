@@ -112,7 +112,7 @@ class Input(InputOutputOverlay):
         channels = self.channels if hasattr(self, 'channels') else 0
         rate = self.rate if hasattr(self, 'rate') else 0
 
-        caps_string = 'audio/x-raw, format=S16LE'
+        caps_string = 'audio/x-raw, layout=interleaved, format=S16LE'
         if channels and rate:
             caps_string += ', channels=%d, rate=%d' % (channels, rate)
         return caps_string

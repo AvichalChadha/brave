@@ -88,7 +88,7 @@ class ConnectionToMixer(Connection):
 
     def _add_to_mix(self, audio_or_video):
         if audio_or_video not in self._mix_request_pad:
-            # We need to conect the tee to the destination. This is the pad of the tee:
+            # We need to connect the tee to the destination. This is the pad of the tee:
             tee_pad = self._get_or_create_tee_pad(audio_or_video)
             self._mix_request_pad[audio_or_video] = self.dest.get_new_pad_for_source(audio_or_video)
 
