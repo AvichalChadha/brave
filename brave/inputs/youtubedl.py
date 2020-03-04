@@ -218,9 +218,11 @@ class YoutubeDLInput( Input ):
         # default caps
         # audio/x-raw,channels=2,layout=interleaved,rate=44100,format=S16LE
 
+        # caps="audio/x-raw, channels=2, rate=44100, format=S16LE"
+
         bin_as_string = ( 'audioconvert ! '
                           'audiorate ! audioresample ! '
-                          'capsfilter caps="audio/x-raw, channels=2, rate=44100, format=S16LE" name=audio_capsfilter ! '
+                          'capsfilter name=audio_capsfilter ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true '
                           'final_audio_tee. ! queue ! fakesink sync=true' )

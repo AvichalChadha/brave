@@ -84,7 +84,7 @@ class Input(InputOutputOverlay):
 
         # An internal format of 'RGBA' ensures alpha support and no color variation.
         # It then may be set to something else on output (e.g. I420)
-        caps_string = 'video/x-raw,pixel-aspect-ratio=1/1,format=RGBA'
+        caps_string = 'video/x-raw,pixel-aspect-ratio=1/1,framerate=30/1,format=RGBA'
         if width and height:
             caps_string += ',width=%d,height=%d' % (width, height)
         return caps_string
