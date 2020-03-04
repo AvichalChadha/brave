@@ -193,8 +193,7 @@ class YoutubeDLInput( Input ):
     def create_video_elements( self ):
         # bin_as_string = f'videoconvert ! videoscale ! capsfilter name=capsfilter ! queue ! {self.default_video_pipeline_string_end()}'
 
-        bin_as_string = ( 'videoconvert ! video/x-raw ! '
-                          'videorate ! videoscale ! '
+        bin_as_string = ( 'videoconvert ! videorate ! videoscale ! '
                           'capsfilter name=capsfilter ! '
                           'queue name=video_output_queue ! '
                           'tee name=final_video_tee allow-not-linked=true '
@@ -220,8 +219,7 @@ class YoutubeDLInput( Input ):
 
         # caps="audio/x-raw, channels=2, rate=44100, format=S16LE"
 
-        bin_as_string = ( 'audioconvert ! audio/x-raw ! '
-                          'audiorate ! audioresample ! '
+        bin_as_string = ( 'audioconvert ! audiorate ! audioresample ! '
                           'capsfilter name=audio_capsfilter ! '
                           'queue name=audio_output_queue ! '
                           'tee name=final_audio_tee allow-not-linked=true '
@@ -232,6 +230,8 @@ class YoutubeDLInput( Input ):
         self.audio_capsfilter   = bin.get_by_name( 'audio_capsfilter' )
         self.final_audio_tee    = bin.get_by_name( 'final_audio_tee' )
         self.audio_output_queue = bin.get_by_name( 'audio_output_queue' )
+
+        self._update_audio_filter_caps()
 
         self.playsink.set_property( 'audio-sink', bin )
 
