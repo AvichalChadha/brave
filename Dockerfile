@@ -53,10 +53,11 @@ RUN git clone --depth 1 https://github.com/RidgeRun/gst-interpipe.git && \
 COPY ./gst-WebRenderSrc /src/gst-WebRenderSrc
 WORKDIR /src/gst-WebRenderSrc
 
-RUN cd gst-WebRenderSrc && \
-    cmake -DCMAKE_BUILD_TYPE=Release . && \
-    CC=clang CXX=clang++ make -stdlib=g++ && \
-    make install
+# Come back to this later
+#RUN cd gst-WebRenderSrc && \
+#    cmake -DCMAKE_BUILD_TYPE=Release . && \
+#    CC=clang CXX=clang++ make -stdlib=g++ && \
+#    make install
 
 
 # Everything Else
