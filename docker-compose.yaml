@@ -21,7 +21,7 @@ services:
     environment:
       - PORT=5000
       - GST_DEBUG=3
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
       - FORCE_COLOR=1
 
     deploy:
